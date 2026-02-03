@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { format } from 'date-fns';
-import { de } from 'date-fns/locale';
+import { enUS } from 'date-fns/locale';
 import { generateHTML } from '@tiptap/html';
 import StarterKit from '@tiptap/starter-kit';
 import { Avatar } from '@/components/ui/avatar';
@@ -54,7 +54,7 @@ export function PostCard({
                 {post.author.name}
               </div>
               <div className="text-sm text-gray-500">
-                {format(new Date(post.createdAt), 'd.M.yyyy', { locale: de })}
+                {format(new Date(post.createdAt), 'MMM d, yyyy', { locale: enUS })}
               </div>
             </div>
           </Link>
@@ -127,7 +127,7 @@ export function PostCard({
               href={`/feed/${post.id}/edit`}
               className="text-sm text-gray-500 hover:text-gray-700"
             >
-              Bearbeiten
+              Edit
             </Link>
           </>
         )}

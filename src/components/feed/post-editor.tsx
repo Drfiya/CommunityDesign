@@ -26,11 +26,11 @@ export function PostEditor({ content, onChange, placeholder }: PostEditorProps) 
   return (
     <div className="border rounded-lg p-4">
       {/* Toolbar */}
-      <div className="flex gap-1 mb-3 pb-3 border-b">
+      <div className="flex gap-2 mb-3 pb-3 border-b">
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleBold().run()}
-          className={`px-2 py-1 rounded hover:bg-gray-100 ${editor.isActive('bold') ? 'bg-gray-200 font-bold' : ''
+          className={`px-3 py-1.5 text-sm font-bold text-gray-700 border border-gray-300 rounded-full hover:bg-gray-50 transition-colors ${editor.isActive('bold') ? 'bg-gray-100 border-gray-400' : ''
             }`}
           aria-label="Bold"
         >
@@ -39,7 +39,7 @@ export function PostEditor({ content, onChange, placeholder }: PostEditorProps) 
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={`px-2 py-1 rounded hover:bg-gray-100 ${editor.isActive('italic') ? 'bg-gray-200 italic' : ''
+          className={`px-3 py-1.5 text-sm italic text-gray-700 border border-gray-300 rounded-full hover:bg-gray-50 transition-colors ${editor.isActive('italic') ? 'bg-gray-100 border-gray-400' : ''
             }`}
           aria-label="Italic"
         >

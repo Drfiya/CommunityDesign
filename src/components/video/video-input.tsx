@@ -60,7 +60,7 @@ export function VideoInput({ onAdd, onPendingChange, disabled, compact }: VideoI
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
               <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
             </svg>
-            Bild/Video
+            Image/Video
           </button>
           <button
             type="button"
@@ -90,7 +90,7 @@ export function VideoInput({ onAdd, onPendingChange, disabled, compact }: VideoI
               if (error) setError(null);
             }}
             onKeyDown={handleKeyDown}
-            placeholder="Video URL einfügen (YouTube, Vimeo, Loom)..."
+            placeholder="Paste video URL (YouTube, Vimeo, Loom)..."
             disabled={disabled}
             autoFocus
             className="flex-1 rounded-full border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent disabled:opacity-50"
@@ -99,7 +99,7 @@ export function VideoInput({ onAdd, onPendingChange, disabled, compact }: VideoI
             type="button"
             onClick={() => { setShowInput(false); setUrl(''); setError(null); }}
             className="shrink-0 text-gray-400 hover:text-gray-600 p-1"
-            aria-label="Schließen"
+            aria-label="Close"
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -114,7 +114,7 @@ export function VideoInput({ onAdd, onPendingChange, disabled, compact }: VideoI
             disabled={disabled || !url.trim()}
             className="px-4 py-2 text-sm font-medium rounded-full bg-gray-900 text-white hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            Hinzufügen
+            Add
           </button>
         </div>
         {error && <p className="text-sm text-red-600">{error}</p>}
