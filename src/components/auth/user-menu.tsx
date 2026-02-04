@@ -41,22 +41,11 @@ export function UserMenu() {
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 p-1 rounded-lg hover:bg-gray-100 transition-colors"
+        className="flex items-center p-1 rounded-full hover:bg-gray-100 transition-colors"
       >
-        <div className="h-8 w-8 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-medium">
+        <div className="h-9 w-9 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-medium">
           {initials}
         </div>
-        <span className="text-sm font-medium hidden sm:block">
-          {session.user.name}
-        </span>
-        <svg
-          className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
       </button>
 
       {isOpen && (

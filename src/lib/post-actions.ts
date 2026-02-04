@@ -17,6 +17,7 @@ export async function createPost(formData: FormData) {
   }
 
   const validatedFields = postSchema.safeParse({
+    title: formData.get('title'),
     content: formData.get('content'),
     embeds: formData.get('embeds'),
   });
@@ -25,17 +26,20 @@ export async function createPost(formData: FormData) {
     return { error: validatedFields.error.flatten().fieldErrors };
   }
 
-  const { content, embeds } = validatedFields.data;
+  const { title, content, embeds } = validatedFields.data;
+  const categoryId = formData.get('categoryId') as string | null;
 
   // Extract plain text for full-text search indexing
   const plainText = extractPlainText(content);
 
   await db.post.create({
     data: {
+      title,
       content: content as Prisma.InputJsonValue,
       embeds: embeds as Prisma.InputJsonValue,
       plainText,
       authorId: session.user.id,
+      categoryId: categoryId || null,
     },
   });
 

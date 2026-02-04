@@ -38,7 +38,7 @@ export function SearchBar({ compact }: SearchBarProps) {
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder={compact ? 'Suche...' : 'Search... ⌘K'}
+        placeholder={compact ? 'Search...' : 'Search... ⌘K'}
         className={`
           px-3 py-2 text-sm rounded-full bg-gray-100 text-gray-900 placeholder:text-gray-500 
           focus:ring-2 focus:ring-blue-500 focus:outline-none border-0

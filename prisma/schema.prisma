@@ -57,6 +57,7 @@ model Category {
 
 model Post {
   id         String    @id @default(cuid())
+  title      String?   @db.VarChar(200) // Optional post title
   content    Json      // Tiptap JSON document
   plainText  String?   @db.Text // Extracted text for full-text search
   embeds     Json      @default("[]") // Array of VideoEmbed objects

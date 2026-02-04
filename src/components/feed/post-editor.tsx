@@ -1,7 +1,10 @@
 'use client';
 
+import { useState, useRef, useEffect } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import Picker from '@emoji-mart/react';
+import data from '@emoji-mart/data';
 
 interface PostEditorProps {
   content?: string;
@@ -9,7 +12,15 @@ interface PostEditorProps {
   placeholder?: string;
 }
 
+interface EmojiData {
+  native: string;
+}
+
 export function PostEditor({ content, onChange, placeholder }: PostEditorProps) {
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const emojiButtonRef = useRef<HTMLButtonElement>(null);
+  const pickerRef = useRef<HTMLDivElement>(null);
+
   const editor = useEditor({
     extensions: [StarterKit],
     content: content ? JSON.parse(content) : '',
@@ -18,6 +29,30 @@ export function PostEditor({ content, onChange, placeholder }: PostEditorProps) 
       onChange?.(editor.getJSON());
     },
   });
+
+  // Close emoji picker when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        pickerRef.current &&
+        !pickerRef.current.contains(event.target as Node) &&
+        emojiButtonRef.current &&
+        !emojiButtonRef.current.contains(event.target as Node)
+      ) {
+        setShowEmojiPicker(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleEmojiSelect = (emoji: EmojiData) => {
+    if (editor) {
+      editor.chain().focus().insertContent(emoji.native).run();
+    }
+    setShowEmojiPicker(false);
+  };
 
   if (!editor) {
     return null;
@@ -45,6 +80,37 @@ export function PostEditor({ content, onChange, placeholder }: PostEditorProps) 
         >
           I
         </button>
+
+        {/* Emoji button */}
+        <div className="relative">
+          <button
+            ref={emojiButtonRef}
+            type="button"
+            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+            className={`px-3 py-1.5 text-sm text-gray-700 border border-gray-300 rounded-full hover:bg-gray-50 transition-colors ${showEmojiPicker ? 'bg-gray-100 border-gray-400' : ''}`}
+            aria-label="Add emoji"
+          >
+            😊
+          </button>
+
+          {/* Emoji picker dropdown */}
+          {showEmojiPicker && (
+            <div
+              ref={pickerRef}
+              className="absolute top-full left-0 mt-2 z-50"
+            >
+              <Picker
+                data={data}
+                onEmojiSelect={handleEmojiSelect}
+                theme="light"
+                previewPosition="none"
+                skinTonePosition="none"
+                maxFrequentRows={2}
+                perLine={8}
+              />
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Editor content */}

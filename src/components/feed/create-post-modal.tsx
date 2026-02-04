@@ -7,6 +7,7 @@ import { VideoInput } from '@/components/video/video-input';
 import { VideoEmbedPlayer } from '@/components/video/video-embed';
 import { createPost } from '@/lib/post-actions';
 import type { VideoEmbed } from '@/types/post';
+import type { MediaUpload } from '@/lib/media-actions';
 import { Avatar } from '@/components/ui/avatar';
 
 interface Category {
@@ -33,8 +34,10 @@ export function CreatePostModal({ categories, userImage, userName }: CreatePostM
     const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+    const [title, setTitle] = useState('');
     const [content, setContent] = useState<object | null>(null);
     const [embeds, setEmbeds] = useState<VideoEmbed[]>([]);
+    const [images, setImages] = useState<MediaUpload[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [hasPendingVideo, setHasPendingVideo] = useState(false);
@@ -54,8 +57,10 @@ export function CreatePostModal({ categories, userImage, userName }: CreatePostM
         setError(null);
 
         const formData = new FormData();
+        formData.set('title', title);
         formData.set('content', JSON.stringify(content));
         formData.set('embeds', JSON.stringify(embeds));
+        formData.set('images', JSON.stringify(images.map(img => img.url)));
         if (selectedCategory) {
             formData.set('categoryId', selectedCategory);
         }
@@ -70,14 +75,21 @@ export function CreatePostModal({ categories, userImage, userName }: CreatePostM
 
         // Success - close modal and refresh
         setIsOpen(false);
+        setTitle('');
         setContent(null);
         setEmbeds([]);
+        setImages([]);
         setSelectedCategory(null);
+        setIsSubmitting(false);
         router.refresh();
     };
 
     const removeEmbed = (index: number) => {
         setEmbeds(embeds.filter((_, i) => i !== index));
+    };
+
+    const removeImage = (index: number) => {
+        setImages(images.filter((_, i) => i !== index));
     };
 
     const getCategoryStyle = (categoryName: string) => {
@@ -152,6 +164,19 @@ export function CreatePostModal({ categories, userImage, userName }: CreatePostM
                                     </div>
                                 </div>
 
+                                {/* Post Title */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Post Title</label>
+                                    <input
+                                        type="text"
+                                        value={title}
+                                        onChange={(e) => setTitle(e.target.value)}
+                                        placeholder="Enter a title for your post (optional)"
+                                        maxLength={200}
+                                        className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 transition-colors"
+                                    />
+                                </div>
+
                                 {/* Content */}
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">Content *</label>
@@ -163,17 +188,40 @@ export function CreatePostModal({ categories, userImage, userName }: CreatePostM
                                     </div>
                                 </div>
 
-                                {/* Video embeds */}
-                                {embeds.length > 0 && (
-                                    <div className="space-y-3">
+                                {/* Media thumbnails (videos and images) */}
+                                {(embeds.length > 0 || images.length > 0) && (
+                                    <div className="flex flex-wrap gap-2">
+                                        {/* Video thumbnails */}
                                         {embeds.map((embed, i) => (
-                                            <div key={`${embed.service}-${embed.id}-${i}`} className="relative">
-                                                <VideoEmbedPlayer embed={embed} />
+                                            <div key={`${embed.service}-${embed.id}-${i}`} className="relative w-20 h-20 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                                                <div className="w-full h-full flex items-center justify-center bg-gray-800">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="white" className="w-8 h-8">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
+                                                    </svg>
+                                                </div>
                                                 <button
                                                     type="button"
                                                     onClick={() => removeEmbed(i)}
-                                                    className="absolute top-2 right-2 bg-black/50 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-black/70"
+                                                    className="absolute top-1 right-1 bg-black/60 text-white rounded-full w-5 h-5 flex items-center justify-center hover:bg-black/80 text-xs"
                                                     aria-label="Remove video"
+                                                >
+                                                    &times;
+                                                </button>
+                                            </div>
+                                        ))}
+                                        {/* Image thumbnails */}
+                                        {images.map((image, i) => (
+                                            <div key={`image-${i}`} className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+                                                <img
+                                                    src={image.url}
+                                                    alt={`Uploaded image ${i + 1}`}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeImage(i)}
+                                                    className="absolute top-1 right-1 bg-black/60 text-white rounded-full w-5 h-5 flex items-center justify-center hover:bg-black/80 text-xs"
+                                                    aria-label="Remove image"
                                                 >
                                                     &times;
                                                 </button>
@@ -191,7 +239,8 @@ export function CreatePostModal({ categories, userImage, userName }: CreatePostM
                             <div className="p-5 border-t border-gray-100 space-y-3">
                                 {/* Video input - takes full width when expanded */}
                                 <VideoInput
-                                    onAdd={(embed) => setEmbeds([...embeds, embed])}
+                                    onAddVideo={(embed) => setEmbeds([...embeds, embed])}
+                                    onAddImage={(image) => setImages([...images, image])}
                                     onPendingChange={setHasPendingVideo}
                                     disabled={isSubmitting}
                                     compact

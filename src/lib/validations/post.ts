@@ -25,6 +25,11 @@ const videoEmbedSchema = z.object({
 
 // Post validation schema
 export const postSchema = z.object({
+  title: z
+    .string()
+    .max(200, 'Title must be 200 characters or less')
+    .optional()
+    .transform((val) => val?.trim() || null),
   content: z
     .string()
     .min(1, 'Content is required')

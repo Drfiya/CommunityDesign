@@ -69,6 +69,11 @@ export function PostCard({
           )}
         </div>
 
+        {/* Post title (if present) */}
+        {post.title && (
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">{post.title}</h3>
+        )}
+
         {/* Post content */}
         <div
           className="prose prose-sm max-w-none text-gray-700"
