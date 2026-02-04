@@ -112,6 +112,7 @@ async function FeedContent({ searchParams }: FeedPageProps) {
                 isLiked={post.isLiked}
                 category={post.category}
                 translatedPlainText={post.plainText || undefined}
+                userLanguage={userLanguage}
               />
             ))}
           </div>
