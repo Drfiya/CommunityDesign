@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import type { Messages } from '@/lib/i18n/messages/en';
 
 interface Category {
     id: string;
@@ -10,13 +9,18 @@ interface Category {
     color: string;
 }
 
+interface TranslatedUI {
+    categoriesTitle: string;
+    allPosts: string;
+}
+
 interface CategoriesSidebarProps {
     categories: Category[];
     activeCategory: string | null;
-    messages: Messages;
+    translatedUI: TranslatedUI;
 }
 
-export function CategoriesSidebar({ categories, activeCategory, messages }: CategoriesSidebarProps) {
+export function CategoriesSidebar({ categories, activeCategory, translatedUI }: CategoriesSidebarProps) {
     const searchParams = useSearchParams();
 
     // Build URL with category filter
@@ -34,7 +38,7 @@ export function CategoriesSidebar({ categories, activeCategory, messages }: Cate
     return (
         <aside className="hidden lg:block w-64 shrink-0">
             <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-                <h2 className="text-base font-semibold text-gray-900 mb-4">{messages.categories.title}</h2>
+                <h2 className="text-base font-semibold text-gray-900 mb-4">{translatedUI.categoriesTitle}</h2>
 
                 <nav className="space-y-1">
                     {/* All Posts */}
@@ -48,10 +52,10 @@ export function CategoriesSidebar({ categories, activeCategory, messages }: Cate
                             }
             `}
                     >
-                        {messages.categories.allPosts}
+                        {translatedUI.allPosts}
                     </Link>
 
-                    {/* Category list */}
+                    {/* Category list - names are already translated */}
                     {categories.map((category) => (
                         <Link
                             key={category.id}
@@ -76,4 +80,3 @@ export function CategoriesSidebar({ categories, activeCategory, messages }: Cate
         </aside>
     );
 }
-

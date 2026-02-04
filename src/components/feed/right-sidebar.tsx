@@ -1,13 +1,19 @@
 import Link from 'next/link';
 import db from '@/lib/db';
 import { Avatar } from '@/components/ui/avatar';
-import type { Messages } from '@/lib/i18n/messages/en';
 
-interface RightSidebarProps {
-    messages: Messages;
+interface TranslatedUI {
+    members: string;
+    leaderboard: string;
+    viewAll: string;
+    level: string;
 }
 
-export async function RightSidebar({ messages }: RightSidebarProps) {
+interface RightSidebarProps {
+    translatedUI: TranslatedUI;
+}
+
+export async function RightSidebar({ translatedUI }: RightSidebarProps) {
     // Fetch member count and top leaderboard users
     const [memberCount, topUsers] = await Promise.all([
         db.user.count(),
@@ -30,7 +36,7 @@ export async function RightSidebar({ messages }: RightSidebarProps) {
                     </div>
                     <div>
                         <div className="text-2xl font-bold text-gray-900">{memberCount}</div>
-                        <div className="text-sm text-gray-500">{messages.sidebar.members}</div>
+                        <div className="text-sm text-gray-500">{translatedUI.members}</div>
                     </div>
                 </div>
             </div>
@@ -40,10 +46,10 @@ export async function RightSidebar({ messages }: RightSidebarProps) {
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
                         <span className="text-base">🏆</span>
-                        <h3 className="text-base font-semibold text-gray-900">{messages.sidebar.leaderboard}</h3>
+                        <h3 className="text-base font-semibold text-gray-900">{translatedUI.leaderboard}</h3>
                     </div>
                     <Link href="/leaderboard" className="text-sm text-blue-600 hover:text-blue-700 font-medium">
-                        {messages.sidebar.viewAll}
+                        {translatedUI.viewAll}
                     </Link>
                 </div>
 
@@ -58,7 +64,7 @@ export async function RightSidebar({ messages }: RightSidebarProps) {
                             <Avatar src={user.image} name={user.name} size="sm" />
                             <div className="flex-1 min-w-0">
                                 <div className="text-sm font-medium text-gray-900 truncate">{user.name}</div>
-                                <div className="text-xs text-gray-500">{messages.gamification.level} {user.level}</div>
+                                <div className="text-xs text-gray-500">{translatedUI.level} {user.level}</div>
                             </div>
                             <span className="text-sm font-semibold text-gray-900">{user.points}</span>
                         </Link>

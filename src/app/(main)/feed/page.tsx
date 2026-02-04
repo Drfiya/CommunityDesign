@@ -8,7 +8,7 @@ import { CategoriesSidebar } from '@/components/feed/categories-sidebar';
 import { RightSidebar } from '@/components/feed/right-sidebar';
 import { CreatePostModal } from '@/components/feed/create-post-modal';
 import { translatePostsForUser } from '@/lib/translation';
-import { getMessages } from '@/lib/i18n';
+import { translateUIText, translateObjects } from '@/lib/translation/ui';
 
 const POSTS_PER_PAGE = 10;
 
@@ -81,27 +81,50 @@ async function FeedContent({ searchParams }: FeedPageProps) {
   // Translate posts to user's preferred language (server-side)
   const translatedPosts = await translatePostsForUser(postsWithLikeStatus, userLanguage);
 
-  // Get translated UI messages
-  const messages = getMessages(userLanguage);
+  // Translate categories dynamically via DeepL
+  const translatedCategories = await translateObjects(
+    categories,
+    ['name'],
+    'en', // Categories are stored in English
+    userLanguage,
+    'category'
+  );
+
+  // Translate UI strings dynamically
+  const translatedUI = {
+    categoriesTitle: await translateUIText('Categories', 'en', userLanguage, 'sidebar'),
+    allPosts: await translateUIText('All Posts', 'en', userLanguage, 'sidebar'),
+    members: await translateUIText('Members', 'en', userLanguage, 'sidebar'),
+    leaderboard: await translateUIText('Leaderboard', 'en', userLanguage, 'sidebar'),
+    viewAll: await translateUIText('View all', 'en', userLanguage, 'sidebar'),
+    level: await translateUIText('Level', 'en', userLanguage, 'gamification'),
+    writeSomething: await translateUIText('Write something...', 'en', userLanguage, 'placeholder'),
+    noPosts: await translateUIText('No posts yet. Be the first to share something!', 'en', userLanguage, 'message'),
+  };
 
   return (
     <div className="flex gap-6 max-w-7xl mx-auto">
       {/* Left sidebar - Categories */}
-      <CategoriesSidebar categories={categories} activeCategory={category} messages={messages} />
+      <CategoriesSidebar
+        categories={translatedCategories}
+        activeCategory={category}
+        translatedUI={translatedUI}
+      />
 
       {/* Center - Posts feed */}
       <div className="flex-1 min-w-0 space-y-4">
         {/* Create post trigger */}
         <CreatePostModal
-          categories={categories}
+          categories={translatedCategories}
           userImage={session?.user?.image}
           userName={session?.user?.name}
+          writeSomethingPlaceholder={translatedUI.writeSomething}
         />
 
         {/* Posts list */}
         {translatedPosts.length === 0 ? (
           <div className="bg-white rounded-xl p-12 text-center text-gray-500 shadow-sm border border-gray-100">
-            <p>No posts yet. Be the first to share something!</p>
+            <p>{translatedUI.noPosts}</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -131,7 +154,7 @@ async function FeedContent({ searchParams }: FeedPageProps) {
       </div>
 
       {/* Right sidebar - Members & Leaderboard */}
-      <RightSidebar messages={messages} />
+      <RightSidebar translatedUI={translatedUI} />
     </div>
   );
 }
