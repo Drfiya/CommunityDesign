@@ -10,7 +10,7 @@ import { updateProfile } from '@/lib/profile-actions';
 import { Button } from '@/components/ui/button';
 import { AvatarUpload } from '@/components/profile/avatar-upload';
 import { BioTextarea } from '@/components/profile/bio-textarea';
-import { SUPPORTED_LANGUAGES, LANGUAGE_NAMES } from '@/lib/translation';
+import { SUPPORTED_LANGUAGES, LANGUAGE_NAMES } from '@/lib/translation/constants';
 
 // Use input type for form fields (before transform/default)
 type ProfileFormValues = z.input<typeof profileSchema>;

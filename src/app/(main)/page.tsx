@@ -14,7 +14,7 @@ export default async function HomePage() {
     db.post.count(),
     db.event.count({
       where: {
-        startDate: { gte: new Date() }
+        startTime: { gte: new Date() }
       }
     }).catch(() => 0), // Handle if events table doesn't exist
   ]);
