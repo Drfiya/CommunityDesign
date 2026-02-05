@@ -52,8 +52,7 @@ const MIN_TEXT_LENGTH = 2;
 // Track our own mutations to avoid flicker loops with React reconciliation
 const pendingOurMutations = new WeakSet<Node>();
 
-// Track which nodes have been translated to which language
-const translatedNodes = new WeakMap<Node, string>();
+// NOTE: translatedNodes is now component-scoped (see translatedNodesRef in GlobalTranslator)
 
 interface TranslationTarget {
     type: 'text' | 'attribute';
@@ -71,6 +70,9 @@ export function GlobalTranslator() {
     const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const pendingTargetsRef = useRef<TranslationTarget[]>([]);
     const isProcessingRef = useRef(false);
+
+    // Track which nodes have been translated to which language (component-scoped)
+    const translatedNodesRef = useRef(new WeakMap<Node, string>());
 
     /**
      * Check if an element should be skipped
@@ -167,7 +169,7 @@ export function GlobalTranslator() {
                 const text = node.textContent || '';
                 if (shouldTranslateText(text)) {
                     // Check if already translated to current language
-                    if (translatedNodes.get(node) === currentLanguage) {
+                    if (translatedNodesRef.current.get(node) === currentLanguage) {
                         continue;
                     }
                     targets.push({
@@ -274,7 +276,7 @@ export function GlobalTranslator() {
                     // Mark as our mutation to avoid observer loop
                     pendingOurMutations.add(textNode);
                     textNode.textContent = translation;
-                    translatedNodes.set(textNode, currentLanguage);
+                    translatedNodesRef.current.set(textNode, currentLanguage);
 
                     // Add subtle visual feedback
                     if (parent) {
@@ -367,7 +369,7 @@ export function GlobalTranslator() {
                     if (cached) {
                         pendingOurMutations.add(node);
                         node.textContent = cached;
-                        translatedNodes.set(node, currentLanguage);
+                        translatedNodesRef.current.set(node, currentLanguage);
                     }
                 } else if (shouldTranslateText(text)) {
                     targets.push({
@@ -454,6 +456,10 @@ export function GlobalTranslator() {
      * Keeps the data-original-text attributes so we can use them for re-translation
      */
     const resetToOriginalForRetranslation = useCallback(() => {
+        // Clear translation tracking to ensure full re-scan
+        // This is critical to avoid stale entries causing incomplete translations
+        translatedNodesRef.current = new WeakMap<Node, string>();
+
         // Reset text nodes to original but KEEP the data-original-text attribute
         document.querySelectorAll('[data-original-text]').forEach(element => {
             const original = element.getAttribute('data-original-text');
