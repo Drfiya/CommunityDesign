@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { UserMenu } from '@/components/auth/user-menu';
 import { SearchBar } from '@/components/search/search-bar';
+import { LanguageSelector } from '@/components/translation/LanguageSelector';
 import { getCommunitySettings } from '@/lib/settings-actions';
 import type { Messages } from '@/lib/i18n/messages/en';
 
@@ -53,13 +54,17 @@ export async function Header({ messages }: HeaderProps) {
         </div>
 
         {/* Right column - Fixed width on mobile to match nav bell area */}
-        <div className="w-10 lg:w-72 shrink-0 flex items-center justify-end gap-2 lg:gap-3">
+        <div className="w-10 lg:w-auto shrink-0 flex items-center justify-end gap-2 lg:gap-3">
           {/* Plus button - hidden on mobile for symmetry */}
           <button className="hidden lg:flex w-9 h-9 rounded-full bg-gray-100 items-center justify-center text-gray-600 hover:bg-gray-200 transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
           </button>
+          {/* Language Selector - hidden on mobile */}
+          <div className="hidden lg:block">
+            <LanguageSelector />
+          </div>
           {/* Bell notification icon */}
           <button className="relative w-9 h-9 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">

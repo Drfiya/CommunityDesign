@@ -94,10 +94,11 @@ export async function translateText(
 
 /**
  * Translate multiple texts in a single batch request
+ * If sourceLang is omitted, DeepL will auto-detect the source language
  */
 export async function translateBatch(
     texts: string[],
-    sourceLang: string,
+    sourceLang: string | undefined,  // Optional - undefined enables auto-detection
     targetLang: string
 ): Promise<string[]> {
     if (!DEEPL_API_KEY) {
@@ -125,17 +126,23 @@ export async function translateBatch(
     }
 
     try {
+        // Build request body - only include source_lang if specified (auto-detect otherwise)
+        const requestBody: Record<string, unknown> = {
+            text: nonEmptyTexts,
+            target_lang: toDeepLLanguage(targetLang, true),
+        };
+
+        if (sourceLang) {
+            requestBody.source_lang = toDeepLLanguage(sourceLang, false);
+        }
+
         const response = await fetch(`${DEEPL_API_URL}/v2/translate`, {
             method: 'POST',
             headers: {
                 'Authorization': `DeepL-Auth-Key ${DEEPL_API_KEY}`,
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                text: nonEmptyTexts,
-                source_lang: toDeepLLanguage(sourceLang, false),
-                target_lang: toDeepLLanguage(targetLang, true),
-            }),
+            body: JSON.stringify(requestBody),
         });
 
         if (!response.ok) {
