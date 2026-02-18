@@ -61,10 +61,8 @@ export async function Header({ messages }: HeaderProps) {
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
           </button>
-          {/* Language Selector - hidden on mobile */}
-          <div className="hidden lg:block">
-            <LanguageSelector />
-          </div>
+          {/* Language Selector - visible on all screen sizes */}
+          <LanguageSelector />
           {/* Bell notification icon */}
           <button className="relative w-9 h-9 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
